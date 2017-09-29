@@ -38,6 +38,12 @@ findbugs {
     reportLevel = "low"
 }
 
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
 // Define the main class for the application
 mainClassName = 'Main'
 
