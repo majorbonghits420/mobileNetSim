@@ -1,5 +1,4 @@
 import node.Node;
-import mobility.MobilityModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,35 +6,40 @@ import java.util.List;
 public class Simulator {
     private ArrayList<Node> nodes;
     private double timeStep; /** The timestep of the simulation in seconds. */
-    private MobilityModel model;
 
-    Simulator(double timeStep, MobilityModel m) {
-        this(timeStep, new ArrayList<Node>(), m);
+    Simulator(double timeStep) {
+        this(timeStep, new ArrayList<Node>());
     }
 
-    Simulator(double timeStep, List<Node> nodes, MobilityModel m) {
+    Simulator(double timeStep, List<Node> nodes) {
         this.nodes = new ArrayList<Node>(nodes);
         this.timeStep = timeStep;
-        this.model = m;
     }
 
     /**
-     * This function performs the full simulation.
+     * Initializes the simulator
+     */
+    public void init() {}
+
+    /**
+     * Performs the simulation for a given duration of time.
      *
      */
-    public void run() {
+    public void run(double duration) {
+        double timeElapsed = 0;
+        while (timeElapsed < duration) {
         // Loop through all nodes to update their positions
-
+            for (Node n : nodes) {
+                n.move(timeStep);
+            }
         // Find nodes that are mutually in range of each other
 
         // Send data between connected nodes
+            timeElapsed += timeStep;
+        }
     }
 
     /* Getters and setters */
-    public void setMobilityModel(MobilityModel m) {
-        model = m;
-    }
-
     public double getTimeStep() {
         return timeStep;
     }
@@ -50,9 +54,5 @@ public class Simulator {
 
     public List<Node> getNodes() {
         return nodes;
-    }
-
-    public MobilityModel getMobilityModel() {
-        return model;
     }
 }
