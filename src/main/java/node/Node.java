@@ -1,10 +1,14 @@
 package node;
 
 import mobility.MobilityModel;
+import network.Channel;
+
+import java.util.ArrayList;
 
 public class Node {
     private MobilityModel model; /** Model used for determining position/veolicty of node */
     private double range; /** Data transfer range of the node in meters */
+    private ArrayList<Channel> channels; /** All currently open channels */
 
     /**
      * Creates a node with all fields set to 0.
@@ -23,6 +27,26 @@ public class Node {
     public Node(MobilityModel m, double range) {
         this.model = m;
         this.range = range;
+        channels = new ArrayList<Channel>();
+    }
+
+    /**
+     * Adds a channel to the list of open channels.
+     * Will not add a duplicate channel.
+     */
+    public void addChannel(Channel c) {
+        channels.add(c);
+    }
+
+    /**
+     * Returns true is Node n has an open channel with this node, false otherwise.
+     */
+    public boolean isConnected(Node n) {
+        boolean toReturn = false;
+        for (Channel c: channels) {
+            toReturn = toReturn && c.hasNode(n);
+        }
+        return toReturn;
     }
 
     public double getRange() {
@@ -33,11 +57,40 @@ public class Node {
         range = r;
     }
 
+    public double getXPos() {
+        return model.getXPos();
+    }
+
+    public double getYPos() {
+        return model.getYPos();
+    }
+
     /**
-     * Model the movement of this node for a period of time
+     * Model the movement of this node for a period of time and simulates channels
      */
     public void move(double time) {
         model.model(time);
+        ArrayList<Channel> toRemove = new ArrayList<Channel>();
+        for (Channel c: channels) {
+            if (c.timedout()) {
+                toRemove.add(c);
+            } else {
+                c.update(time);
+                if (c.finished()) {
+                    toRemove.add(c);
+                }
+            }
+        }
+        channels.removeAll(toRemove);
     }
 
+    public boolean canConnect(Node b) {
+        // Need to have each other in range, so take the shorter for check
+        double range = Math.min(this.range, b.range);
+        double xdiff = this.getXPos() - b.getXPos();
+        double ydiff = this.getYPos() - b.getYPos();
+
+        // True i xdiff^2 + ydiff^2 < range^2
+        return (Math.pow(xdiff, 2) + Math.pow(ydiff, 2) < Math.pow(range, 2));
+    }
 }
