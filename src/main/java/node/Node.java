@@ -1,7 +1,10 @@
 package node;
 
+import blockchain.Block;
+import blockchain.Blockchain;
 import mobility.MobilityModel;
 import network.Channel;
+import utils.Sha256;
 
 import java.util.ArrayList;
 
@@ -9,6 +12,7 @@ public class Node {
     private MobilityModel model; /** Model used for determining position/veolicty of node */
     private double range; /** Data transfer range of the node in meters */
     private ArrayList<Channel> channels; /** All currently open channels */
+    private Blockchain chain;
 
     /**
      * Creates a node with all fields set to 0.
@@ -28,6 +32,7 @@ public class Node {
         this.model = m;
         this.range = range;
         channels = new ArrayList<Channel>();
+        chain = new Blockchain(Block.getGenisis());
     }
 
     /**
@@ -47,6 +52,18 @@ public class Node {
             toReturn = toReturn && c.hasNode(n);
         }
         return toReturn;
+    }
+
+    public boolean containsBlock(Block b) {
+        return chain.containsBlock(b);
+    }
+
+    public boolean containsBlock(Sha256 hash) {
+        return chain.containsBlock(hash);
+    }
+
+    public void addBlock(Block b) {
+        chain.addBlock(b);
     }
 
     public double getRange() {
