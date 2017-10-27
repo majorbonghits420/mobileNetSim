@@ -13,12 +13,12 @@ public class Blockchain {
 
     HashMap<Sha256, Block> chain;
 
-    Blockchain(List<Block> blocks) {
+    public Blockchain(List<Block> blocks) {
         chain = new HashMap<Sha256, Block>();
         this.addBlocks(blocks);
     }
 
-    Blockchain(Block b) {
+    public Blockchain(Block b) {
         this(Arrays.asList(b));
     }
 
