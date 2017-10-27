@@ -23,7 +23,7 @@ public class Sha256 implements Data{
      *
      * @param hash A byte array containing a SHA256 hash.
      */
-    Sha256(byte[] hash) {
+    public Sha256(byte[] hash) {
         this.hash = Arrays.copyOf(hash, HASH_SIZE);
     }
 
