@@ -38,6 +38,11 @@ public class Block {
         return Sha256.getHash(bs);
     }
 
+    public static Block getGenisis() {
+        byte[] zeroHash = new byte[32];
+        return new Block(zeroHash, 0);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
