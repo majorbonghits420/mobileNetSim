@@ -1,5 +1,6 @@
 import node.Node;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,19 +26,7 @@ public class Simulator {
      * Performs the simulation for a given duration of time.
      *
      */
-    public void run(double duration) {
-        double timeElapsed = 0;
-        while (timeElapsed < duration) {
-        // Loop through all nodes to update their positions
-            for (Node n : nodes) {
-                n.move(timeStep);
-            }
-        // Find nodes that are mutually in range of each other
-
-        // Send data between connected nodes
-            timeElapsed += timeStep;
-        }
-    }
+    public abstract void run(double duration);
 
     /* Getters and setters */
     public double getTimeStep() {
@@ -55,4 +44,5 @@ public class Simulator {
     public List<Node> getNodes() {
         return nodes;
     }
+
 }
