@@ -40,7 +40,7 @@ public class Block {
 
     public static Block getGenisis() {
         byte[] zeroHash = new byte[32];
-        return new Block(zeroHash, 0);
+        return new Block(new Sha256(zeroHash), 0);
     }
 
     @Override
