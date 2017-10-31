@@ -7,6 +7,8 @@ import network.Channel;
 import utils.Sha256;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
 
 public class Node {
     private MobilityModel model; /** Model used for determining position/veolicty of node */
@@ -80,6 +82,18 @@ public class Node {
 
     public double getYPos() {
         return model.getYPos();
+    }
+
+    /**
+     * Generates a random block that stems from a frontier node.
+     * This block is stored on the node's chain and returned.
+     */
+    public Block generateBlock() {
+        List<Sha256> frontier = chain.getFrontierHashes();
+        int randIndex = ThreadLocalRandom.current().nextInt(0, frontier.size());
+        Block randBlock = new Block(frontier.get(randIndex));
+        chain.addBlock(randBlock);
+        return randBlock;
     }
 
     /**
