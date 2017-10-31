@@ -13,11 +13,11 @@ public class Block {
     private int data;
     private static final Random rng = new Random();
 
-    Block(Sha256 parent) {
+   public  Block(Sha256 parent) {
         this(parent, rng.nextInt());
     }
 
-    Block(Sha256 parent, int data) {
+    public Block(Sha256 parent, int data) {
         this.parent = parent;
         this.data = data;
     }
