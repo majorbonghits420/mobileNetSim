@@ -18,10 +18,10 @@ public class RandomWaypoint extends MobilityModel {
     public static final double MAX_VELOCITY = 4.0; /** In meters per second */
      /** Meters away from point from which it is considered at the waypoint */
     public static final double POINT_RADIUS = 2.0;
-    Tuple<Double, Double> waypoint;
-    double xBound;
-    double yBound;
-    Random rng;
+    protected Tuple<Double, Double> waypoint;
+    protected double xBound;
+    protected double yBound;
+    protected Random rng;
 
     /**
      * Takes in the x and y bounds for the area of the model.
