@@ -33,6 +33,24 @@ public class Blockchain {
         }
     }
 
+    public List<Block> getFrontier() {
+        // Collect all the parents
+        ArrayList<Sha256> parentHashes = new ArrayList<Sha256>();
+        for (Map.Entry<Sha256, Block> kv : chain.entrySet()) {
+            parentHashes.add(kv.getValue().getParent());
+        }
+
+        // Check if each block is in the set of parents. If it isn't its a frontier node
+        ArrayList<Block> frontiers = new ArrayList<Block>();
+        for (Block b : chain.values()) {
+            Sha256 hash = b.getHash();
+            if (!(parentHashes.contains(hash))) {
+                frontiers.add(b);
+            }
+        }
+        return frontiers;
+    }
+
     public List<Sha256> getFrontierHashes() {
         // Collect all the parents
         ArrayList<Sha256> parentHashes = new ArrayList<Sha256>();
