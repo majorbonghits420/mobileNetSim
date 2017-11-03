@@ -1,5 +1,6 @@
 package blockchain;
 
+import network.Data;
 import utils.Sha256;
 
 import java.io.ByteArrayOutputStream;
@@ -7,11 +8,12 @@ import java.io.IOException;
 import java.lang.RuntimeException;
 import java.util.Random;
 
-public class Block {
+public class Block implements Data {
     private Sha256 parent;
      /** We don't actually care about this. This is a random number to ensure hashes differ */
     private int data;
     private static final Random rng = new Random();
+    private static final double DATA_SIZE = 100000.0; // 100 kB
 
    public  Block(Sha256 parent) {
         this(parent, rng.nextInt());
@@ -41,6 +43,10 @@ public class Block {
     public static Block getGenisis() {
         byte[] zeroHash = new byte[32];
         return new Block(new Sha256(zeroHash), 0);
+    }
+
+    public double getByteSize() {
+        return parent.getByteSize() + DATA_SIZE;
     }
 
     @Override
