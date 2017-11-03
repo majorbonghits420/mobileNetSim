@@ -56,6 +56,18 @@ public class Node {
         return toReturn;
     }
 
+    public double getFrontierSize() {
+        return chain.getFrontierHashes().size() * Sha256.HASH_SIZE;
+    }
+
+    public List<Block> getFrontier() {
+        return chain.getFrontier();
+    }
+
+    public List<Sha256> getFrontierHashes() {
+        return chain.getFrontierHashes();
+    }
+
     public boolean containsBlock(Block b) {
         return chain.containsBlock(b);
     }

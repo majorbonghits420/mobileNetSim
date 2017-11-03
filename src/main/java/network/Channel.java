@@ -4,13 +4,13 @@ import node.Node;
 import utils.Tuple;
 
 public abstract class Channel {
-    private Node a;
-    private Node b;
+    protected Node a;
+    protected Node b;
 
     /**
      * Creates a channel between nodes a and b.
      */
-    public Channel(Node a, Node b) {
+    protected Channel(Node a, Node b) {
         this.a = a;
         this.b = b;
     }
@@ -29,6 +29,7 @@ public abstract class Channel {
      * Returns true if the connection has timed out, false otherwise
      */
     public abstract boolean timedout();
+
     public boolean hasNode(Node n) {
         return (this.a == n || this.b == n);
     }
