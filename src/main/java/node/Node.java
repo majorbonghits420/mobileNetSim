@@ -76,6 +76,10 @@ public class Node {
         return chain.containsBlock(hash);
     }
 
+    public Block getBlock(Sha256 hash) {
+        return chain.getBlock(hash);
+    }
+
     public void addBlock(Block b) {
         chain.addBlock(b);
     }
