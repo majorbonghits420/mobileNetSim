@@ -6,6 +6,7 @@ import utils.Tuple;
 public abstract class Channel {
     protected Node a;
     protected Node b;
+    protected double bandwidth;
 
     /**
      * Creates a channel between nodes a and b.
@@ -36,6 +37,14 @@ public abstract class Channel {
 
     public Tuple<Node, Node> getNodes() {
         return new Tuple<Node, Node>(a, b);
+    }
+
+    public double getBandwith() {
+        return bandwidth;
+    }
+
+    public void setBandwidth(double bw) {
+        bandwidth = bw;
     }
 
     @Override
