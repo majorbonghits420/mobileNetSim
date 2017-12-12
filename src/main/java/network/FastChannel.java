@@ -15,8 +15,10 @@ import java.util.List;
 public class FastChannel extends Channel {
 
     private static final double SOL = 300000000; // Approximate as 3 * 10^8
+    private static final double TIMEOUT = 3.0; /**< Timeout time is 3 seconds */
     private State state;
     private double dataTransfered;
+    private double timeDisconnected;
     private ArrayList<Sha256> toRequestFromA;
     private ArrayList<Sha256> toRequestFromB;
     private ArrayList<Block> toAddA;
@@ -26,6 +28,7 @@ public class FastChannel extends Channel {
         super(a, b);
         this.bandwidth = bandwidth;
         dataTransfered = 0.0;
+        timeDisconnected = 0.0;
         toRequestFromA = new ArrayList<Sha256>();
         toRequestFromB = new ArrayList<Sha256>();
         toAddA = new ArrayList<Block>();
@@ -35,8 +38,10 @@ public class FastChannel extends Channel {
 
     public void update(double timestep) {
         if (!a.canConnect(b)) {
+            timeDisconnected += timestep;
             return;
         }
+        timeDisconnected = 0.0;
         double canTransfer = bandwidth * timestep;
         switch (state) {
         case GET_FRONTIER:
@@ -55,13 +60,15 @@ public class FastChannel extends Channel {
                 ArrayList<Sha256> toAdd = new ArrayList<Sha256>();
                 for (Sha256 hash : toRequestFromB) {
                     Block blk = b.getBlock(hash);
-                    Sha256 parentHash = blk.getParent();
-                    if (a.containsBlock(parentHash)) {
-                        a.addBlock(blk);
-                        toRemove.add(hash);
-                    } else {
-                        toAddA.add(blk);
-                        toAdd.add(parentHash);
+                    if (blk != null) {
+                        Sha256 parentHash = blk.getParent();
+                        if (a.containsBlock(parentHash)) {
+                            a.addBlock(blk);
+                            toRemove.add(hash);
+                        } else {
+                            toAddA.add(blk);
+                            toAdd.add(parentHash);
+                        }
                     }
                 }
                 toRequestFromB.addAll(toAdd);
@@ -130,7 +137,7 @@ public class FastChannel extends Channel {
     }
 
     public boolean finished() { return false; }
-    public boolean timedout() { return false; }
+    public boolean timedout() { return (timeDisconnected > TIMEOUT); }
 
     private void helperGetFrontier(double timestep) {
         List<Block> blocks = b.getFrontier();
@@ -199,8 +206,13 @@ public class FastChannel extends Channel {
 
     private double sizeOfBlocks(ArrayList<Sha256> hashes, Node n) {
         double size = 0.0;
-        for( Sha256 h : hashes) {
-            size += (n.getBlock(h)).getByteSize();
+        if (n != null) {
+            for( Sha256 h : hashes) {
+                Block b = n.getBlock(h);
+                if (b != null) {
+                    size += (n.getBlock(h)).getByteSize();
+                }
+            }
         }
         return size;
     }
