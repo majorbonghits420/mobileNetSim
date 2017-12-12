@@ -33,6 +33,10 @@ public class Blockchain {
         }
     }
 
+    public int size() {
+        return chain.size();
+    }
+
     public List<Block> getFrontier() {
         // Collect all the parents
         ArrayList<Sha256> parentHashes = new ArrayList<Sha256>();
@@ -70,6 +74,10 @@ public class Blockchain {
     }
 
     public Block getBlock(Sha256 hash) {
+        // If they are asking for the genisis block
+        if (hash.equals(Block.getGenisis().getParent())) {
+            return Block.getGenisis();
+        }
         return chain.get(hash);
     }
 
@@ -84,7 +92,7 @@ public class Blockchain {
      * Checks the chain for the block corresponding to the given hash
      */
     public boolean containsBlock(Sha256 hash) {
-        return chain.containsKey(hash);
+        return chain.containsKey(hash) || hash.equals(Block.getGenisis().getParent());
     }
 
 }
