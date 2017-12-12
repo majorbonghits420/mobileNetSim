@@ -62,6 +62,11 @@ public class Sha256 implements Data{
     }
 
     @Override
+    public String toString() {
+        return Arrays.toString(hash);
+    }
+
+    @Override
     public int hashCode() {
         return Arrays.hashCode(hash);
 
