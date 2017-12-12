@@ -18,7 +18,6 @@ public class FastChannel extends Channel {
     private static final double TIMEOUT = 3.0; /**< Timeout time is 3 seconds */
     private State state;
     private double dataTransfered;
-    private double leftoverTransfer; /**< Leftover data that could have been transferred if state was changed */
     private double timeDisconnected;
     private ArrayList<Sha256> toRequestFromA;
     private ArrayList<Sha256> toRequestFromB;
@@ -29,7 +28,6 @@ public class FastChannel extends Channel {
         super(a, b, bandwidth);
         dataTransfered = 0.0;
         timeDisconnected = 0.0;
-        leftoverTransfer = 0.0;
         toRequestFromA = new ArrayList<Sha256>();
         toRequestFromB = new ArrayList<Sha256>();
         toAddA = new ArrayList<Block>();
@@ -43,7 +41,7 @@ public class FastChannel extends Channel {
             return;
         }
         timeDisconnected = 0.0;
-        double canTransfer = bandwidth * timestep + leftoverTransfer;
+        double canTransfer = bandwidth * timestep;
         switch (state) {
         case GET_FRONTIER:
             helperGetFrontier(timestep);
