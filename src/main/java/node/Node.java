@@ -11,10 +11,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
 
 public class Node {
-    private MobilityModel model; /** Model used for determining position/veolicty of node */
-    private double range; /** Data transfer range of the node in meters */
-    private ArrayList<Channel> channels; /** All currently open channels */
-    private Blockchain chain;
+    private MobilityModel model; /**< Model used for determining position/veolicty of node */
+    private double range; /**< Data transfer range of the node in meters */
+    private ArrayList<Channel> channels; /**< All currently open channels */
+    private Blockchain chain; /**< The blockchain maintained by the Node */
 
     /**
      * Creates a node with all fields set to 0.
@@ -51,7 +51,7 @@ public class Node {
     public boolean isConnected(Node n) {
         boolean toReturn = false;
         for (Channel c: channels) {
-            toReturn = toReturn && c.hasNode(n);
+            toReturn = toReturn || c.hasNode(n);
         }
         return toReturn;
     }
@@ -100,6 +100,10 @@ public class Node {
         return model.getYPos();
     }
 
+    public int numBlocks() {
+        return chain.size();
+    }
+
     /**
      * Generates a random block that stems from a frontier node.
      * This block is stored on the node's chain and returned.
@@ -119,13 +123,12 @@ public class Node {
         model.model(time);
         ArrayList<Channel> toRemove = new ArrayList<Channel>();
         for (Channel c: channels) {
+            c.update(time);
             if (c.timedout()) {
                 toRemove.add(c);
-            } else {
-                c.update(time);
-                if (c.finished()) {
-                    toRemove.add(c);
-                }
+            }
+            if (c.finished()) {
+                toRemove.add(c);
             }
         }
         channels.removeAll(toRemove);
