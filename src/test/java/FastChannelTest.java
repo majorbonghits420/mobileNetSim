@@ -40,4 +40,34 @@ public class FastChannelTest {
             assertTrue("Node b should contain block", b.containsBlock(blk));
         }
     }
+
+    @Test
+    public void testTransferNewBlock() {
+        StaticPoint p1 = new StaticPoint(10, 10);
+        StaticPoint p2 = new StaticPoint(0, 0);
+        Node a = new Node(p1, 50);
+        Node b = new Node(p2, 40);
+        double bw = 100000; // 100 KB/sec
+
+        FastChannel channel = new FastChannel(a, b, bw);
+        a.addChannel(channel);
+
+        double totalTime = 50;
+        double timestep = 0.25;
+        double time = 0.0;
+        Block newBlock = a.generateBlock();
+        while (time < totalTime) {
+            a.move(timestep);
+            assertTrue("A and B have the same number of blocks", a.numBlocks() >= b.numBlocks());
+            if (b.containsBlock(newBlock)) {
+                System.out.println("New block successfully sent to Node b after " + time + " seconds");
+                newBlock = a.generateBlock();
+                System.out.println("Generate new block with hash" + newBlock.getHash());
+            }
+            time += timestep;
+            System.out.println(time);
+        }
+        System.out.println("We exited the while loop");
+        assertTrue(a.numBlocks() == b.numBlocks() || a.numBlocks() == b.numBlocks() + 1);
+    }
 }
