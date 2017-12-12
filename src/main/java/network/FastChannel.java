@@ -18,6 +18,7 @@ public class FastChannel extends Channel {
     private static final double TIMEOUT = 3.0; /**< Timeout time is 3 seconds */
     private State state;
     private double dataTransfered;
+    private double leftoverTransfer; /**< Leftover data that could have been transferred if state was changed */
     private double timeDisconnected;
     private ArrayList<Sha256> toRequestFromA;
     private ArrayList<Sha256> toRequestFromB;
@@ -28,6 +29,7 @@ public class FastChannel extends Channel {
         super(a, b, bandwidth);
         dataTransfered = 0.0;
         timeDisconnected = 0.0;
+        leftoverTransfer = 0.0;
         toRequestFromA = new ArrayList<Sha256>();
         toRequestFromB = new ArrayList<Sha256>();
         toAddA = new ArrayList<Block>();
@@ -41,7 +43,7 @@ public class FastChannel extends Channel {
             return;
         }
         timeDisconnected = 0.0;
-        double canTransfer = bandwidth * timestep;
+        double canTransfer = bandwidth * timestep + leftoverTransfer;
         switch (state) {
         case GET_FRONTIER:
             helperGetFrontier(timestep);
@@ -82,13 +84,14 @@ public class FastChannel extends Channel {
                 }
                 toAddA.removeAll(addBlocks);
                 // Reset state variable
-                dataTransfered = 0.0;
+                dataTransfered = canTransfer + dataTransfered - blockSizes - requestSize;
                 // If we are done getting parents, we then send any that need to be sent
                 if (toRequestFromB.isEmpty()) {
                     state = State.SEND_PARENTS;
                 }
             } else {
                 dataTransfered += canTransfer;
+
             }
             break;
 
@@ -120,7 +123,7 @@ public class FastChannel extends Channel {
                     }
                 }
                 toAddB.removeAll(addedBlocks);
-                dataTransfered = 0.0;
+                dataTransfered = canTransfer + dataTransfered - blockSizs - requestSizes;
                 // if we are done with sending, we repeat the frontier process to search for new blocks
                 if (toRequestFromA.isEmpty()) {
                     state = State.GET_FRONTIER;
@@ -160,7 +163,7 @@ public class FastChannel extends Channel {
                     toAddA.add(b);
                 }
             }
-            dataTransfered = 0.0;
+            dataTransfered = dataTransfered + canTransfer - frontSize;
             // We have received the frontier, time to send ours
             state = State.SEND_FRONTIER;
             // We haven't finished the transfer yet
@@ -194,7 +197,7 @@ public class FastChannel extends Channel {
                 }
             }
             // Update our state
-            dataTransfered = 0.0;
+            dataTransfered = canSend + dataTransfered - size;
             // We have sent our frontier, now time to request any blocks we need
             state = State.GET_PARENTS;
         } else {
