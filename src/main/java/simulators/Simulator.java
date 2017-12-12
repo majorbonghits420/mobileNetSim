@@ -13,8 +13,8 @@ import java.util.List;
  * that is specific to the given simulation.
  */
 public abstract class Simulator {
-    private ArrayList<Node> nodes; /**< A list of all the nodes contained in the simulation */
-    private double timeStep; /**< The timestep of the simulation in seconds. */
+    protected ArrayList<Node> nodes; /**< A list of all the nodes contained in the simulation */
+    protected double timeStep; /**< The timestep of the simulation in seconds. */
 
     /**
      * Constructs a simulator object with a given timestep and no associated Nodes.
