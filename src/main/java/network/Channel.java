@@ -3,6 +3,8 @@ package network;
 import node.Node;
 import utils.Tuple;
 
+import java.lang.Math;
+
 public abstract class Channel {
     protected Node a;
     protected Node b;
@@ -11,9 +13,25 @@ public abstract class Channel {
     /**
      * Creates a channel between nodes a and b.
      */
-    protected Channel(Node a, Node b) {
+    protected Channel(Node a, Node b, double bw) {
         this.a = a;
         this.b = b;
+        double availB = b.availableBandwidth();
+        double availA = a.availableBandwidth();
+        double avail = Math.min(availA, availB);
+        double attemptBandwidth = Math.min(avail, bw);
+        // If we are able to claim bandwidth from the node
+        if (a.useBandwidth(attemptBandwidth) && b.useBandwidth(attemptBandwidth)) {
+            bandwidth = attemptBandwidth;
+            // The node cannot give us any bandwidth
+        } else {
+            bandwidth = 0.0;
+        }
+    }
+
+    public void tearDown() {
+        a.returnBandwidth(bandwidth);
+        b.returnBandwidth(bandwidth);
     }
 
     /**

@@ -6,6 +6,7 @@ import mobility.MobilityModel;
 import network.Channel;
 import utils.Sha256;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
@@ -15,13 +16,15 @@ public class Node {
     private double range; /**< Data transfer range of the node in meters */
     private ArrayList<Channel> channels; /**< All currently open channels */
     private Blockchain chain; /**< The blockchain maintained by the Node */
+    private double maxBw; /**< The max bandwidth the node can use at any given time */
+    private double availableBw; /**< The amount of bandwidth available to give to channels */
 
     /**
      * Creates a node with all fields set to 0.
      *
      */
-    public Node(MobilityModel m) {
-        this(m, 0.0);
+    public Node(MobilityModel m, double maxBandwidth) {
+        this(m, maxBandwidth, 0.0);
     }
 
     /**
@@ -30,11 +33,33 @@ public class Node {
      * @param x the initial x position of the Node
      * @param y the initial y position of the Node
      */
-    public Node(MobilityModel m, double range) {
+    public Node(MobilityModel m, double maxBandwidth, double range) {
         this.model = m;
         this.range = range;
         channels = new ArrayList<Channel>();
         chain = new Blockchain(Block.getGenisis());
+        maxBw = maxBandwidth;
+        availableBw = maxBandwidth;
+    }
+
+    public double availableBandwidth() {
+        return availableBw;
+    }
+
+    public double getMaxBandwidth() {
+        return maxBw;
+    }
+
+    public boolean useBandwidth(double bw) {
+        if (bw > availableBw) {
+            return false;
+        }
+        availableBw -= bw;
+        return true;
+    }
+
+    public void returnBandwidth(double bw) {
+        availableBw = Math.min(availableBw + bw, maxBw);
     }
 
     /**
@@ -126,9 +151,11 @@ public class Node {
             c.update(time);
             if (c.timedout()) {
                 toRemove.add(c);
+                c.tearDown();
             }
             if (c.finished()) {
                 toRemove.add(c);
+                c.tearDown();
             }
         }
         channels.removeAll(toRemove);

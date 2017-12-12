@@ -25,8 +25,7 @@ public class FastChannel extends Channel {
     private ArrayList<Block> toAddB;
 
     public FastChannel(Node a, Node b, double bandwidth) {
-        super(a, b);
-        this.bandwidth = bandwidth;
+        super(a, b, bandwidth);
         dataTransfered = 0.0;
         timeDisconnected = 0.0;
         toRequestFromA = new ArrayList<Sha256>();
