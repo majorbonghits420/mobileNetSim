@@ -5,7 +5,7 @@ import utils.Tuple;
 
 import java.lang.Math;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class simulates movement by assigning a node a destination waypoint.
@@ -21,7 +21,6 @@ public class RandomWaypoint extends MobilityModel {
     protected Tuple<Double, Double> waypoint;
     protected double xBound;
     protected double yBound;
-    protected Random rng;
 
     /**
      * Takes in the x and y bounds for the area of the model.
@@ -31,7 +30,6 @@ public class RandomWaypoint extends MobilityModel {
     public RandomWaypoint(double maxX, double maxY) {
         this.xBound = maxX;
         this.yBound = maxY;
-        rng = new Random();
         waypoint = getRandPt();
         this.x_pos = getRandNum(maxX);
         this.y_pos = getRandNum(maxY);
@@ -53,13 +51,13 @@ public class RandomWaypoint extends MobilityModel {
     }
 
     private Tuple<Double, Double> getRandPt() {
-        double x = getRandNum(xBound);
-        double y = getRandNum(yBound);
+        double x = ThreadLocalRandom.current().nextDouble(-1 * xBound, xBound);
+        double y = ThreadLocalRandom.current().nextDouble(-1 * yBound, yBound);
         return new Tuple<Double, Double>(x,y);
     }
 
     private double getRandNum(double bound) {
-        return (rng.nextDouble() - 0.5) * 2 * bound;
+        return ThreadLocalRandom.current().nextDouble(-1 * bound, bound);
     }
 
     private void headToPt(Tuple<Double, Double> pt) {
@@ -67,7 +65,7 @@ public class RandomWaypoint extends MobilityModel {
         double yDist = waypoint.right() - y_pos;
         double norm = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
         // Have the +1 so we are at least moving at 1 m/s
-        norm = norm * (1 + 1 / rng.nextDouble() * (MAX_VELOCITY - 1));
+        norm = norm * (1 / ThreadLocalRandom.current().nextDouble(1, MAX_VELOCITY));
         x_vel = xDist / norm;
         y_vel = yDist / norm;
     }
