@@ -13,9 +13,11 @@ public class FastChannelTest {
     public void testTransfer() {
         StaticPoint p1 = new StaticPoint(10, 10);
         StaticPoint p2 = new StaticPoint(0, 0);
-        Node a = new Node(p1, 50);
-        Node b = new Node(p2, 50);
         double bw = 100000; // bandwidth 100 KB/sec
+        double range = 50;
+        Node a = new Node(p1, bw, range);
+        Node b = new Node(p2, bw, range);
+
 
         // Add nodes to a and b
         ArrayList<Block> allBlocks = new ArrayList<Block>();
