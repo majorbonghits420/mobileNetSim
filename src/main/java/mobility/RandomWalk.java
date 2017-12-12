@@ -27,13 +27,11 @@ public class RandomWalk extends MobilityModel {
     }
 
     public void model(double time) {
-        // Random walk in x,y (0,1)
-        double xdiff = ThreadLocalRandom.current().nextDouble();
-        double ydiff = ThreadLocalRandom.current().nextDouble();
-        // Calculate new velocity
-        double theta = Math.atan(ydiff/xdiff);
-        x_vel = velMag * Math.cos(theta);
-        y_vel = velMag * Math.sin(theta);
+        // Random walk in x,y (-1,1)
+        double xdiff = ThreadLocalRandom.current().nextDouble(-1, 1);
+        double ydiff = ThreadLocalRandom.current().nextDouble(-1, 1);
+        x_vel = velMag * xdiff;
+        y_vel = velMag * ydiff;
         // Update our position
         x_pos += x_vel * time;
         y_pos += y_vel * time;
