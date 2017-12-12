@@ -3,12 +3,11 @@ package mobility;
 import mobility.MobilityModel;
 
 import java.lang.Math;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomWalk extends MobilityModel {
 
     private static final double MAX_VELOCITY = 4.0;
-    protected static final Random rng = new Random();
     protected double velMag;
 
     public RandomWalk() {
@@ -16,7 +15,7 @@ public class RandomWalk extends MobilityModel {
     }
 
     public RandomWalk(double x, double y) {
-        this(x, y, rng.nextDouble() * MAX_VELOCITY);
+        this(x, y, ThreadLocalRandom.current().nextDouble(1, MAX_VELOCITY));
     }
 
     public RandomWalk(double x, double y, double vel) {
@@ -29,8 +28,8 @@ public class RandomWalk extends MobilityModel {
 
     public void model(double time) {
         // Random walk in x,y (0,1)
-        double xdiff = rng.nextDouble();
-        double ydiff = rng.nextDouble();
+        double xdiff = ThreadLocalRandom.current().nextDouble();
+        double ydiff = ThreadLocalRandom.current().nextDouble();
         // Calculate new velocity
         double theta = Math.atan(ydiff/xdiff);
         x_vel = velMag * Math.cos(theta);
