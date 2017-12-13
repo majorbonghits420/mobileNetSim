@@ -36,6 +36,7 @@ public class Main {
                 // Create a passive node
                 if (i < numPass) {
                     PassiveNode p = new PassiveNode(m, maxNodeBw, range);
+                    nodes.add(p);
                     // Create an active node
                 } else {
 
