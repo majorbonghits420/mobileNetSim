@@ -38,6 +38,7 @@ public class PassiveNodeTest {
 
         // Check to make sure that the size of b grew, but not the size of a
         assertTrue("Node b should have more blocks", active.numBlocks() < pass.numBlocks());
+        assertTrue("Node a should only have the blocks we gave it", active.numBlocks() == 4);
     }
 
 }
