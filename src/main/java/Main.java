@@ -23,7 +23,7 @@ public class Main {
         int numNodes = 50;
         double range = 70;
 
-        for (double percentPassive = 0.1; percentPassive <= 0.6; percentPassive += 0.1) {
+        for (double percentPassive = 0.1; percentPassive <= 0.9; percentPassive += 0.1) {
             // Output the percentage of passive nodes
             System.out.print(percentPassive);
             ArrayList<Node> nodes = new ArrayList<Node>();
