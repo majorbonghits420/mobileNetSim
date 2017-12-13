@@ -25,7 +25,7 @@ public class Main {
 
         for (double percentPassive = 0.1; percentPassive <= 0.9; percentPassive += 0.1) {
             // Output the percentage of passive nodes
-            System.out.print(percentPassive);
+            System.out.print(percentPassive + ", ");
             ArrayList<Node> nodes = new ArrayList<Node>();
             int numPass = (int) (percentPassive * numNodes);
             for (int i = 0; i < numNodes; i++) {
