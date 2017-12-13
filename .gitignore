@@ -3,6 +3,7 @@ build/
 .gradle/
 
 # Ignore doxygen generated files
+Doxyfile
 html/
 latex/
 
