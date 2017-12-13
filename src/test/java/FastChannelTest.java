@@ -9,11 +9,12 @@ import node.Node;
 import java.util.ArrayList;
 
 public class FastChannelTest {
+
     @Test
     public void testTransfer() {
         StaticPoint p1 = new StaticPoint(10, 10);
         StaticPoint p2 = new StaticPoint(0, 0);
-        double bw = 100000; // bandwidth 100 KB/sec
+        double bw = 1000000; // bandwidth 1 MB/sec
         double range = 50;
         Node a = new Node(p1, bw, range);
         Node b = new Node(p2, bw, range);
@@ -31,8 +32,8 @@ public class FastChannelTest {
 
         // Update Node a for plenty of time
         // NOTE: only Node a needs to be updates because it contains the channel
-        double timestep = 0.25;
-        for (int i = 0; i < 50000; i++) {
+        double timestep = 1.0;
+        for (int i = 0; i < 170; i++) {
             a.move(timestep);
         }
 
@@ -47,9 +48,10 @@ public class FastChannelTest {
     public void testTransferNewBlock() {
         StaticPoint p1 = new StaticPoint(10, 10);
         StaticPoint p2 = new StaticPoint(0, 0);
-        Node a = new Node(p1, 50);
-        Node b = new Node(p2, 40);
         double bw = 100000; // 100 KB/sec
+
+        Node a = new Node(p1, bw, 50);
+        Node b = new Node(p2, bw, 40);
 
         FastChannel channel = new FastChannel(a, b, bw);
         a.addChannel(channel);
@@ -69,6 +71,7 @@ public class FastChannelTest {
             time += timestep;
             System.out.println(time);
         }
+        assertTrue("Node a should have more than the starting blocks", a.numBlocks() > 2);
         System.out.println("We exited the while loop");
         assertTrue(a.numBlocks() == b.numBlocks() || a.numBlocks() == b.numBlocks() + 1);
     }
