@@ -1,3 +1,11 @@
 # Ignore gradle stuff
 build/
 .gradle/
+
+# Ignore doxygen generated files
+html/
+latex/
+
+# Ignore files used for results
+*.txt
+*.csv
