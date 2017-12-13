@@ -5,10 +5,13 @@ import mobility.MobilityModel;
 import java.lang.Math;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Implements a random walk movement model
+ */
 public class RandomWalk extends MobilityModel {
 
-    private static final double MAX_VELOCITY = 4.0;
-    protected double velMag;
+    private static final double MAX_VELOCITY = 4.0; /**< Max velocity that is modeled */
+    protected double velMag; /**< Velocity magnitude of this model */
 
     public RandomWalk() {
         this(0.0, 0.0);
@@ -26,6 +29,11 @@ public class RandomWalk extends MobilityModel {
         y_vel = 0;
     }
 
+    /**
+     * Randomly walks is a given direction for the given time
+     *
+     * @param time to walk in a random direction
+     */
     public void model(double time) {
         // Random walk in x,y (-1,1)
         double xdiff = ThreadLocalRandom.current().nextDouble(-1, 1);

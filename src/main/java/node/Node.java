@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.List;
 
+/**
+ * A generic Node in a network that makes connections to other nodes and maintains a blockchain.
+ * Actively tries to get and send blocks to other Nodes it has channels with.
+ */
 public class Node {
     private MobilityModel model; /**< Model used for determining position/veolicty of node */
     private double range; /**< Data transfer range of the node in meters */
@@ -107,6 +111,10 @@ public class Node {
 
     public void addBlock(Block b) {
         chain.addBlock(b);
+    }
+
+    public void addBlocks(List<Block> blocks) {
+        chain.addBlocks(blocks);
     }
 
     public double getRange() {

@@ -15,12 +15,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * constructor.
  */
 public class RandomWaypoint extends MobilityModel {
-    public static final double MAX_VELOCITY = 4.0; /** In meters per second */
-     /** Meters away from point from which it is considered at the waypoint */
-    public static final double POINT_RADIUS = 2.0;
-    protected Tuple<Double, Double> waypoint;
-    protected double xBound;
-    protected double yBound;
+    public static final double MAX_VELOCITY = 4.0; /**< Max velicoty in meters per second */
+    public static final double POINT_RADIUS = 2.0; /**< Meters away from point from which it is considered at the waypoint */
+    protected Tuple<Double, Double> waypoint; /**< Waypoint that is being moved to */
+    protected double xBound; /**< Max x cooridnate a waypoint can be inside of */
+    protected double yBound; /**< Max y coordinate a waypoint can be inside of */
 
     /**
      * Takes in the x and y bounds for the area of the model.
@@ -50,6 +49,9 @@ public class RandomWaypoint extends MobilityModel {
         }
     }
 
+    /**
+     * Generates a random point inside the model bounds
+     */
     private Tuple<Double, Double> getRandPt() {
         double x = ThreadLocalRandom.current().nextDouble(-1 * xBound, xBound);
         double y = ThreadLocalRandom.current().nextDouble(-1 * yBound, yBound);
@@ -70,6 +72,9 @@ public class RandomWaypoint extends MobilityModel {
         y_vel = yDist / norm;
     }
 
+    /**
+     * Returns true if within the proper radius of a point
+     */
     private boolean atPoint() {
         double dist = Math.pow((waypoint.left() - x_pos), 2) + Math.pow((waypoint.right() - y_pos), 2);
         return (dist < Math.pow(POINT_RADIUS, 2));

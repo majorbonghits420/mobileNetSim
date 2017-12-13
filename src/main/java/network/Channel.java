@@ -5,10 +5,13 @@ import utils.Tuple;
 
 import java.lang.Math;
 
+/**
+ * Abstract class that represents a data channel between two nodes.
+ */
 public abstract class Channel {
-    protected Node a;
-    protected Node b;
-    protected double bandwidth;
+    protected Node a; /**< First endpoint of the chaneel */
+    protected Node b; /**< Second endpoint of the channel */
+    protected double bandwidth; /**< The bandwidth of the channel in Bytes per sec*/
 
     /**
      * Creates a channel between nodes a and b.
@@ -29,6 +32,10 @@ public abstract class Channel {
         }
     }
 
+    /**
+     * Tears down the channel, highly important to call before removing channel from a Node.
+     * Returns taken bandwidth used to the Nodes the Channel is made between
+     */
     public void tearDown() {
         a.returnBandwidth(bandwidth);
         b.returnBandwidth(bandwidth);
@@ -49,10 +56,21 @@ public abstract class Channel {
      */
     public abstract boolean timedout();
 
+    /**
+     * Returns true if this channel contains the given node
+     *
+     * @param n Node
+     * @return true if node is an endpoint of the channel, false otherwise
+     */
     public boolean hasNode(Node n) {
         return (this.a == n || this.b == n);
     }
 
+    /**
+     * Returns a Tuple containing both endpoints of the Channel
+     *
+     * @return Tuple with two Node endpoints
+     */
     public Tuple<Node, Node> getNodes() {
         return new Tuple<Node, Node>(a, b);
     }
@@ -61,6 +79,11 @@ public abstract class Channel {
         return bandwidth;
     }
 
+    /**
+     * Sets the bandwidth of the channel
+     *
+     * @param bw bandwidth to set in bytes per second
+     */
     public void setBandwidth(double bw) {
         bandwidth = bw;
     }
