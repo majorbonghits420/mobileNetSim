@@ -14,7 +14,6 @@ import java.util.List;
  */
 public class FastChannel extends Channel {
 
-    private static final double SOL = 300000000; // Approximate as 3 * 10^8
     private static final double TIMEOUT = 3.0; /**< Timeout time is 3 seconds */
     private State state;
     private double dataTransfered;
@@ -23,6 +22,8 @@ public class FastChannel extends Channel {
     private ArrayList<Sha256> toRequestFromB;
     private ArrayList<Block> toAddA;
     private ArrayList<Block> toAddB;
+    private ArrayList<Block> sent;
+    private ArrayList<Block> received;
 
     public FastChannel(Node a, Node b, double bandwidth) {
         super(a, b, bandwidth);
@@ -32,10 +33,40 @@ public class FastChannel extends Channel {
         toRequestFromB = new ArrayList<Sha256>();
         toAddA = new ArrayList<Block>();
         toAddB = new ArrayList<Block>();
+        sent = new ArrayList<Block>();;
+        received = new ArrayList<Block>();
         state = State.GET_FRONTIER;
     }
 
     public void update(double timestep) {
+        // Add all the blocks that were sent or recieved the previous step to their corresponding Node
+        b.addBlocks(sent);
+        a.addBlocks(received);
+
+        // Cleanup of all datastructures that add to blockchain
+        // Cleanup of toAddA
+        ArrayList<Block> addBlocks = new ArrayList<Block>();
+        for (Block blk : toAddA) {
+            if (a.containsBlock(blk.getParent())) {
+                received.add(blk);
+                //a.addBlock(blk);
+                addBlocks.add(blk);
+            }
+        }
+        toAddA.removeAll(addBlocks);
+
+        // Cleanup toAddB
+        ArrayList<Block> addedBlocks = new ArrayList<Block>();
+        for (Block blk : toAddB) {
+            if (b.containsBlock(blk.getParent())) {
+                sent.add(blk);
+                //b.addBlock(blk);
+                addedBlocks.add(blk);
+            }
+        }
+        toAddB.removeAll(addedBlocks);
+
+        // Make sure we are connected, if not, increment timeout counter and return
         if (!a.canConnect(b)) {
             timeDisconnected += timestep;
             return;
@@ -62,7 +93,7 @@ public class FastChannel extends Channel {
                     if (blk != null) {
                         Sha256 parentHash = blk.getParent();
                         if (a.containsBlock(parentHash)) {
-                            a.addBlock(blk);
+                            received.add(blk);
                             toRemove.add(hash);
                         } else {
                             toAddA.add(blk);
@@ -72,15 +103,7 @@ public class FastChannel extends Channel {
                 }
                 toRequestFromB.addAll(toAdd);
                 toRequestFromB.removeAll(toRemove);
-                // Cleanup of toAddA
-                ArrayList<Block> addBlocks = new ArrayList<Block>();
-                for (Block blk : toAddA) {
-                    if (a.containsBlock(blk.getParent())) {
-                        a.addBlock(blk);
-                        addBlocks.add(blk);
-                    }
-                }
-                toAddA.removeAll(addBlocks);
+
                 // Reset state variable
                 dataTransfered = canTransfer + dataTransfered - blockSizes - requestSize;
                 // If we are done getting parents, we then send any that need to be sent
@@ -103,7 +126,7 @@ public class FastChannel extends Channel {
                     Block block = a.getBlock(hash);
                     Sha256 pHash = block.getParent();
                     if (b.containsBlock(pHash)) {
-                        b.addBlock(block);
+                        sent.add(block);
                         toRemove.add(hash);
                     } else {
                         toAddB.add(block);
@@ -112,15 +135,7 @@ public class FastChannel extends Channel {
                 }
                 toRequestFromA.addAll(toAdd);
                 toRequestFromA.removeAll(toRemove);
-                // Cleanup toAddB
-                ArrayList<Block> addedBlocks = new ArrayList<Block>();
-                for (Block blk : toAddB) {
-                    if (b.containsBlock(blk.getParent())) {
-                        b.addBlock(blk);
-                        addedBlocks.add(blk);
-                    }
-                }
-                toAddB.removeAll(addedBlocks);
+
                 dataTransfered = canTransfer + dataTransfered - blockSizs - requestSizes;
                 // if we are done with sending, we repeat the frontier process to search for new blocks
                 if (toRequestFromA.isEmpty()) {
@@ -154,7 +169,7 @@ public class FastChannel extends Channel {
                 // If we have the parent, add to chain
                 Sha256 parentHash = b.getParent();
                 if (a.containsBlock(parentHash)) {
-                    a.addBlock(b);
+                    received.add(b);
                 } else {
                     // Add parent to blocks to request, add recived blocks of ones to add later
                     toRequestFromB.add(parentHash);
@@ -186,7 +201,7 @@ public class FastChannel extends Channel {
                     // Check for the parent
                     Sha256 parentHash = b.getParent();
                     if(this.b.containsBlock(parentHash)) {
-                        this.b.addBlock(b);
+                        sent.add(b);
                     } else {
                         // We will need to send the parent
                         toRequestFromA.add(parentHash);
