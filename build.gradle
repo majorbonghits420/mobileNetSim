@@ -44,6 +44,12 @@ tasks.withType(FindBugs) {
         html.enabled true
     }
 }
+
 // Define the main class for the application
 mainClassName = 'Main'
 
+run {
+    if(System.getProperty("exec.args") != null) {
+        args System.getProperty("exec.args").split()
+    }
+}

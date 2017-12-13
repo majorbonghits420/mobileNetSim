@@ -14,7 +14,23 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) {
-        passiveImpact();
+        if (args.length == 0) {
+            printHelp();
+            System.exit(0);
+        }
+        switch (args[0]) {
+        case "range": {
+                runTrustedNodesRangeTest();
+                break;
+            }
+        case "passive": {
+            passiveImpact();
+            break;
+        }
+        default:
+            printHelp();
+            System.exit(0);
+        }
     }
 
     public static void passiveImpact() {
@@ -80,5 +96,11 @@ public class Main {
             sim.run(3600); // Run the simulation for 1 hours
             System.out.println();
         }
+    }
+
+    public static void printHelp() {
+        System.out.println("Enter a valid option: ");
+        System.out.println("range - Runs Spreadsim instances with varying ranges");
+        System.out.println("passive - Runs Spreadsim instances with varying numbers of passive nodes");
     }
 }
